@@ -78,8 +78,8 @@
     <p id="durumMesaji">Metin girin ve dönüştür butonuna basın.</p>
 
     <script>
-        // Lütfen AWS EC2 Sunucunuzun Public IP adresi ve portuyla güncelleyin!
-        const API_URL = "http://52.59.206.215:5000/seslendir"; 
+        
+        const API_URL = "/seslendir"; 
 
         const btnSeslendir = document.getElementById('btnSeslendir');
         const durum = document.getElementById('durumMesaji');
@@ -95,34 +95,34 @@
                 return;
             }
 
-            // Arayüzü beklemeye al
+          
             btnSeslendir.disabled = true;
             btnSeslendir.textContent = "İşleniyor, sunucudan yanıt bekleniyor...";
             durum.textContent = "İşlem başladı. Bu işlem metin uzunluğuna bağlı olarak biraz sürebilir.";
             durum.style.backgroundColor = '#e0f7fa';
             durum.style.color = '#00778c';
             
-            // AWS EC2 API'sine Fetch isteği
+           
             fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // JSON payload'unu gönder
+                
                 body: JSON.stringify({ metin: metin, ses_kodu: ses })
             })
             .then(response => {
                 if (!response.ok) {
-                    // Sunucudan gelen hata mesajını yakalamayı dene
+                    
                     return response.json().then(err => { 
                         throw new Error(err.error || `Sunucu Hatası: Durum Kodu ${response.status}`); 
                     }).catch(() => {
-                        // JSON olmayan hata durumunu yakala (örn: 404/500 HTML hatası)
+                        
                         throw new Error(`Bağlantı Hatası: Sunucu IP'si/Portu doğru mu? Durum Kodu ${response.status}`);
                     });
                 }
-                return response.blob(); // MP3 dosyasını blob olarak al
+                return response.blob(); 
             })
             .then(blob => {
-                // İndirme işlemini başlat
+                
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.style.display = 'none';
@@ -143,7 +143,7 @@
                 console.error('Hata:', error);
             })
             .finally(() => {
-                // İşlem bitince butonu tekrar aktif et
+                
                 btnSeslendir.disabled = false;
                 btnSeslendir.textContent = "MP3 Oluştur ve İndir";
             });
